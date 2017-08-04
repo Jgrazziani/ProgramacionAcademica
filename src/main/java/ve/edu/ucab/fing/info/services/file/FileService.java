@@ -27,7 +27,7 @@ import WebService.ProfesorRecurso;
 
 @Path("/v1")
 public class FileService {
-
+    static int numeroProfesores = 0;
     public static final String FILE_SERVER_LOCATION = "C:/Users/el_je_000/Documents/Prueba-carga/"; // CAMBIAR...
     // http://localhost:8080/file-service/api/v1/download
     @GET
@@ -132,8 +132,9 @@ public class FileService {
     }
     private static String ReadList(List<String> profesores,String path) throws Exception{
         //System.out.println("READ");
+        numeroProfesores = profesores.size();
         for (int i= 0; i<profesores.size();i++){
-            System.out.println(profesores.get(i));
+            System.out.println(profesores.get(i) + " hay " + profesores.size() + " profesores en el file");
             try{
                 //Response create = ProfesorRecurso.createProfesores(profesores.get(i));
                 //System.out.println("create "+create);
@@ -174,7 +175,7 @@ public class FileService {
             System.out.println("");
         }
          //ReadListMat(materias);
-         Response create = HorarioRecurso.createHorario(materias.toString());
+         Response create = HorarioRecurso.createHorario(materias.toString()+Integer.toString(numeroProfesores));
         }
         catch(Exception e){
             throw e;
