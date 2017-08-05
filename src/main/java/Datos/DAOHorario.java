@@ -58,113 +58,12 @@ public class DAOHorario extends DAOGeneral implements IDAOHorario {
         numeroMaterias = (materias.length)/20;        
         return numeroMaterias;
     }
-    private List<String> EliminarRepetidos(List<String> dias){
-        for (int i = 0; i<dias.size();i++){
-            for(int j = 0; j<dias.size()-1 ;j++){
-               if(i!=j){
-                   if(dias.get(i)==dias.get(j)){
-                       dias.remove(i);
-                   }
-               } 
-            }
-        }
-        return dias;
-    }
-    private String Dia(String dia){        
-        //System.out.println("Funcion dia "+dia +" " +dia.length());
-        List<String> dias = new ArrayList<>();
-        dias.add(dia);
-        String diaSemana ="";
-        for(int i = 0; i<dias.size();i++){
-           System.out.println(dias.get(i));
-           /*char ultimo = dia.charAt(dia.length()-1);
-           System.out.println(ultimo);*/
-           if (dia.length()>1){
-                diaSemana = dia.substring(0, dia.length()-1);
-                //int diaSemana = dia.length();
-                //System.out.println("dias "+diaSemana);
-           }
-        }
-        /*if(dia.length()>0){
-            char ultimo = dia.charAt(dia.length()-1);
-            System.out.println(ultimo);
-        }*/
-        return diaSemana;
-    }
-    private String obtenerValorDia(List<String> horarios, int p){
-        String elDia="";
-        for(int i=0 ; i<horarios.size();i++ ){
-            int lunes,martes,miercoles,jueves,viernes;
-            lunes=4;martes=7;miercoles=10;jueves=13;viernes=16;            
-            if (p==1){
-                elDia="";
-                if (Integer.parseInt(horarios.get(i))== lunes){
-                    elDia = "Lunes"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== martes){
-                    elDia = "Martes"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== miercoles){
-                    elDia = "Miercoles"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== jueves){
-                    elDia = "Jueves"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== viernes){
-                    elDia = "Viernes"+String.valueOf(p);
-                }                
-            }else {
-                elDia = "";
-                for(int j=2; j<=p; j++){
-                   lunes = lunes+19; martes = martes+19; miercoles = miercoles+19; jueves = jueves+19; viernes = viernes+19; 
-                }
-                if (Integer.parseInt(horarios.get(i))== lunes){
-                    elDia = "Lunes"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== martes){
-                    elDia = "Martes"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== miercoles){
-                    elDia = "Miercoles"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== jueves){
-                    elDia = "Jueves"+String.valueOf(p);
-                }else if (Integer.parseInt(horarios.get(i))== viernes){
-                    elDia = "Viernes"+String.valueOf(p);
-                }                
-            }
-        }
-        elDia = Dia(elDia);
-        return elDia;
-    }
-    private int secuenciax(int vuelta,int valor){
-        int x;
-        if (vuelta == 1){
-            x= 0;
-        }else{        
-            x = valor;            
-            for (int i = 2 ; i<vuelta;i++){
-                x = x+20;
-            }
-        }
-        return x;
-    }
-    private int secuenciay(int vuelta,int valor){
-        int x;
-        if (vuelta == 1){
-            x= 19;
-        }else{        
-            x = valor;            
-            for (int i = 1 ; i<vuelta;i++){
-                x = x+20;
-            }
-        }
-        return x;
-    }    
-    private List<String> listado(List<String> horarios){
-        System.out.println("Listado "+ horarios.size()/20);
-        int materias = horarios.size()/20;
-     
-        return horarios;
-    }
     @Override
     public boolean CrearHorario(String horarios) {
         System.out.println("horario " + horarios);
         boolean respuesta = false;
         String id= "";
+        boolean SegundaClase = false;
         GraphDatabaseService graphDb = null;
         try {
             graphDb = DAOGeneral.IniciarConexion();            
@@ -189,24 +88,21 @@ public class DAOHorario extends DAOGeneral implements IDAOHorario {
                     }if (str[i].length()>10){
                         str[i] = EliminarPrimerEspacio(str[i]);                        
                     }
-                    //System.out.println("STRING "+str[i] + " i: " + i + " Lomgitud "+ str[i].length());
                 }
                 int numeroMaterias = contarMaterias(str);  
-                    List<String> HorarioDias = new ArrayList<>();
-                    List<String> Dias = new ArrayList<>();
                     String correoProfesor = "";
                     int InicioVuelta = 0;
                     String HoraInicio="";
                     String HoraFin="";
                     String Salon="";
                     String Dia = "";
+                    String HoraInicio2="";
+                    String HoraFin2="";
+                    String Salon2="";
+                    String Dia2 = "";
                     for (int p = 1; p<=numeroMaterias;p++)
-                    {   //valor = valor +1;
+                    {   
                         System.out.println("materia: "+p);
-                        //int y = 19;
-                        //int h = 20;                         
-                        //y = secuenciay(p,y);
-                        //h = secuenciax(p,h); 
                         ResourceIterator<Node> providers = graphDb.findNodes(NodeType.secuenciaID);
                         while (providers.hasNext()) {
                             final Node recordNode = providers.next();               
@@ -224,8 +120,6 @@ public class DAOHorario extends DAOGeneral implements IDAOHorario {
                             System.out.println("p mayor a 1");
                             InicioVuelta = InicioVuelta+20;
                         }
-                        //for ( int x= h; x<=y; x++){                   
-                            //System.out.println("Vuelta: "+p + " " +str[x] );
                             correoProfesor = str[InicioVuelta+19];
                             System.out.println("correo del profesor "+correoProfesor);
                             Node Horario = graphDb.createNode(DAOHorario.NodeType.Horario);                    
@@ -254,7 +148,7 @@ public class DAOHorario extends DAOGeneral implements IDAOHorario {
                                 HoraFin = str[InicioVuelta+17].substring(0,str[InicioVuelta+17].length()-3);
                                 Salon = str[InicioVuelta+18];
                                 Dia = "Viernes";
-                            }
+                            }                            
                             Horario.setProperty("Hor_id", id);
                             Horario.setProperty("Hor_dia",Dia);
                             Horario.setProperty("Hor_hora_inicio", HoraInicio);
@@ -263,10 +157,78 @@ public class DAOHorario extends DAOGeneral implements IDAOHorario {
                             Horario.setProperty("Hor_nrc_catedra", str[InicioVuelta]);
                             Horario.setProperty("Hor_seccion", str[InicioVuelta+1]);
                             Horario.setProperty("Hor_tipo", "horarios");
-                            Horario.setProperty("Hor_salon", Salon);                            
-                            tx.success();
+                            Horario.setProperty("Hor_salon", Salon); 
+                            ResourceIterator<Node> providers1 = graphDb.findNodes(NodeType.Usuario);
+                            while (providers1.hasNext()) {
+                                final Node recordNode1 = providers1.next();               
+                                if (recordNode1.getProperty("Usu_correo").toString().equals(correoProfesor))
+                                {   
+                                    recordNode1.createRelationshipTo(Horario, RelationType.Pertenece_a);
+                                }
+                                else {
+                                    System.out.println("No encontrado "  + recordNode1.getProperty("Usu_correo"));
+                                }
+                            }                            
+                            tx.success();                            
+                            
+                           if (str[InicioVuelta+7]!="" && str[InicioVuelta+7].length()>=8 && Dia!="Martes"){
+                                HoraInicio2 = str[InicioVuelta+7].substring(0,str[InicioVuelta+7].length()-3);
+                                HoraFin2 = str[InicioVuelta+8].substring(0,str[InicioVuelta+8].length()-3);
+                                Salon2 = str[InicioVuelta+9];
+                                Dia2 = "Martes";                                
+                            }else if(str[InicioVuelta+10]!="" && str[InicioVuelta+10].length()>=8 && Dia != "Miercoles"){
+                                HoraInicio2 = str[InicioVuelta+10].substring(0,str[InicioVuelta+10].length()-3);
+                                HoraFin2 = str[InicioVuelta+11].substring(0,str[InicioVuelta+11].length()-3);
+                                Salon2 = str[InicioVuelta+12]; 
+                                Dia2 = "Miercoles";                                
+                            }else if(str[InicioVuelta+13]!="" && str[InicioVuelta+13].length()>=8 && Dia!="Jueves"){
+                                HoraInicio2 = str[InicioVuelta+13].substring(0,str[InicioVuelta+13].length()-3);
+                                HoraFin2 = str[InicioVuelta+14].substring(0,str[InicioVuelta+14].length()-3);
+                                Salon2 = str[InicioVuelta+15];
+                                Dia2 = "Jueves";                                
+                            }else if(str[InicioVuelta+16]!="" && str[InicioVuelta+16].length()>=8 && Dia!="Viernes"){
+                                HoraInicio2 = str[InicioVuelta+16].substring(0,str[InicioVuelta+16].length()-3);
+                                HoraFin2 = str[InicioVuelta+17].substring(0,str[InicioVuelta+17].length()-3);
+                                Salon2 = str[InicioVuelta+18];
+                                Dia2 = "Viernes";                                
+                            }
+                            if (HoraInicio2.length()>1 && HoraFin2.length()>1 && Salon2.length()>1 && Dia2.length()>1){
+                                String id2="";
+                                ResourceIterator<Node> providersS = graphDb.findNodes(NodeType.secuenciaID);
+                                while (providersS.hasNext()) {
+                                    final Node recordNodeS = providersS.next();               
+                                    String i = recordNodeS.getProperty("Sec_horario").toString();
+                                    int number = Integer.parseInt(i);
+                                    number = number + 1;
+                                    id2 = String.valueOf(number);
+                                    recordNodeS.setProperty("Sec_horario", id2);
+                                    tx.success();
+                                }                                        
+                                Node Horario1 = graphDb.createNode(DAOHorario.NodeType.Horario);
+                                Horario1.setProperty("Hor_id", id2);
+                                Horario1.setProperty("Hor_dia",Dia2);
+                                Horario1.setProperty("Hor_hora_inicio", HoraInicio2);
+                                Horario1.setProperty("Hor_hora_fin", HoraFin2);
+                                Horario1.setProperty("Hor_catedra",str[InicioVuelta+3]);
+                                Horario1.setProperty("Hor_nrc_catedra", str[InicioVuelta]);
+                                Horario1.setProperty("Hor_seccion", str[InicioVuelta+1]);
+                                Horario1.setProperty("Hor_tipo", "horarios");
+                                Horario1.setProperty("Hor_salon", Salon2); 
+                                ResourceIterator<Node> providers2 = graphDb.findNodes(NodeType.Usuario);
+                                while (providers2.hasNext()) {
+                                    final Node recordNode2 = providers2.next();               
+                                    if (recordNode2.getProperty("Usu_correo").toString().equals(correoProfesor))
+                                    {   
+                                        recordNode2.createRelationshipTo(Horario1, RelationType.Pertenece_a);
+                                    }
+                                    else {
+                                        System.out.println("No encontrado "  + recordNode2.getProperty("Usu_correo"));
+                                    }
+                                }
+
+                                tx.success();                                
+                            }                                                                    
                             respuesta = true;
-                        //}
                     }                 
             }
             catch (NullPointerException NullPointerexcepcion){

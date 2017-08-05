@@ -136,9 +136,9 @@ public class FileService {
         for (int i= 0; i<profesores.size();i++){
             System.out.println(profesores.get(i) + " hay " + profesores.size() + " profesores en el file");
             try{
-                //Response create = ProfesorRecurso.createProfesores(profesores.get(i));
+                Response create = ProfesorRecurso.createProfesores(profesores.get(i));
                 //System.out.println("create "+create);
-                System.out.println("No llamar a daoprofesor");
+                //System.out.println("No llamar a daoprofesor");
             }catch(Exception e)
             {
                 throw e;
